@@ -6,7 +6,7 @@
 
 **Modern, Forensic-Grade, Security-First Data Recovery &amp; File Carving Desktop Application for Windows**
 
-[![.NET 8.0](https://img.shields.io/badge/.NET-8.0%20LTS-512BD4?logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/download/dotnet/8.0)
+[![.NET 10.0](https://img.shields.io/badge/.NET-10.0-512BD4?logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/download/dotnet/10.0)
 [![C# 12](https://img.shields.io/badge/C%23-12.0-239120?logo=csharp&logoColor=white)](https://learn.microsoft.com/dotnet/csharp/)
 [![WPF](https://img.shields.io/badge/Platform-Windows%20WPF-0078D4?logo=windows&logoColor=white)](https://learn.microsoft.com/dotnet/desktop/wpf/)
 [![Tests](https://img.shields.io/badge/Tests-8%2F8%20Passing-brightgreen?logo=github-actions&logoColor=white)](tests/DataRecovery.Tests)
@@ -126,7 +126,7 @@ flowchart TD
 |---|---|---|
 | **Operating System** | Windows 10 (Build 19041+) | Windows 11 (64-bit) |
 | **Architecture** | x64 | x64 |
-| **Runtime** | Included in Self-Contained Release | [.NET 8.0 Desktop Runtime](https://dotnet.microsoft.com/download/dotnet/8.0) |
+| **Runtime** | Included in Self-Contained Release | [.NET 10.0 Desktop Runtime](https://dotnet.microsoft.com/download/dotnet/10.0) |
 | **Privileges** | Standard (for disk images) / **Administrator** (for physical drives & raw partitions) | **Run as Administrator** |
 | **RAM** | 4 GB | 8 GB+ |
 
@@ -193,7 +193,7 @@ $appPath = "C:\Path\To\DataRevive"
 
 ### Prerequisites
 - [Git](https://git-scm.com/)
-- [.NET 8.0 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
+- [.NET 10.0 SDK](https://dotnet.microsoft.com/download/dotnet/10.0)
 - Visual Studio 2022 (v17.8+) with *.NET Desktop Development* workload, or Visual Studio Code / Antigravity IDE with C# Dev Kit.
 
 ### 1. Clone the Repository
