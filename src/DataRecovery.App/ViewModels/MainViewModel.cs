@@ -32,7 +32,7 @@ namespace DataRecovery.App.ViewModels
         ScanResults
     }
 
-    public partial class MainViewModel : ObservableObject
+    public partial class MainViewModel : ObservableObject, IDisposable
     {
         private CancellationTokenSource? _scanCts;
         private ISectorReader? _activeReader;
@@ -799,6 +799,7 @@ namespace DataRecovery.App.ViewModels
                 // 2. Offload sector carving & MFT scan completely to background thread pool
                 await Task.Run(async () =>
                 {
+                    _activeReader?.Dispose();
                     _activeReader = new UnbufferedSectorReader(targetDevice);
                     var engine = new CarvingEngine();
                     var channel = Channel.CreateBounded<CarvedFileResult>(new BoundedChannelOptions(10000)
@@ -1239,6 +1240,23 @@ namespace DataRecovery.App.ViewModels
                 };
                 Process.Start(psi);
                 Application.Current.Shutdown();
+            }
+            catch { }
+        }
+
+        public void Dispose()
+        {
+            try
+            {
+                _scanCts?.Cancel();
+                _scanCts?.Dispose();
+            }
+            catch { }
+
+            try
+            {
+                _activeReader?.Dispose();
+                _activeReader = null;
             }
             catch { }
         }

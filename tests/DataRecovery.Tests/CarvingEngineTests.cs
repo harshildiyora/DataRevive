@@ -104,11 +104,13 @@ namespace DataRecovery.Tests
 
                 // 4. Export and verify SHA-256 integrity
                 var exporter = new FileExporter();
-                string exportedJpeg = await exporter.ExportFileAsync(reader, jpegResult, exportDir, CancellationToken.None);
+                string? exportedJpeg = await exporter.ExportFileAsync(reader, jpegResult, exportDir, CancellationToken.None);
+                Assert.NotNull(exportedJpeg);
                 Assert.True(File.Exists(exportedJpeg));
                 Assert.Equal(expectedJpegHash, jpegResult.Sha256Hash);
 
-                string exportedPng = await exporter.ExportFileAsync(reader, pngResult, exportDir, CancellationToken.None);
+                string? exportedPng = await exporter.ExportFileAsync(reader, pngResult, exportDir, CancellationToken.None);
+                Assert.NotNull(exportedPng);
                 Assert.True(File.Exists(exportedPng));
                 Assert.Equal(expectedPngHash, pngResult.Sha256Hash);
 
@@ -212,7 +214,8 @@ namespace DataRecovery.Tests
 
                 // 4. Export and verify standard Windows ZipArchive opens it without error
                 var exporter = new FileExporter();
-                string exportedZip = await exporter.ExportFileAsync(reader, zipResult, exportDir, CancellationToken.None);
+                string? exportedZip = await exporter.ExportFileAsync(reader, zipResult, exportDir, CancellationToken.None);
+                Assert.NotNull(exportedZip);
                 Assert.True(File.Exists(exportedZip));
 
                 // Verify standard ZipArchive opens and reads the inner entry

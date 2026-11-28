@@ -69,6 +69,26 @@ namespace DataRecovery.Core.Security
         }
 
         /// <summary>
+        /// Sanitizes relative directory paths to prevent path traversal and invalid characters.
+        /// </summary>
+        public static string SanitizeRelativeDirectoryPath(string relativeDir)
+        {
+            if (string.IsNullOrWhiteSpace(relativeDir)) return string.Empty;
+
+            string[] parts = relativeDir.Split(new[] { '\\', '/' }, StringSplitOptions.RemoveEmptyEntries);
+            var cleanParts = new System.Collections.Generic.List<string>(parts.Length);
+            foreach (var part in parts)
+            {
+                string clean = SanitizeFileName(part);
+                if (!string.IsNullOrEmpty(clean) && clean != "." && clean != "..")
+                {
+                    cleanParts.Add(clean);
+                }
+            }
+            return string.Join(Path.DirectorySeparatorChar.ToString(), cleanParts);
+        }
+
+        /// <summary>
         /// Path Traversal & Filename Sanitizer:
         /// Removes relative traversal characters and invalid Windows file tokens.
         /// </summary>

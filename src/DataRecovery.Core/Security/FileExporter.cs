@@ -38,9 +38,17 @@ namespace DataRecovery.Core.Security
                 clean = clean.TrimStart('\\', '/');
 
                 string? dir = Path.GetDirectoryName(clean);
-                targetDir = !string.IsNullOrWhiteSpace(dir)
-                    ? Path.Combine(destinationDirectory, dir)
-                    : destinationDirectory;
+                if (!string.IsNullOrWhiteSpace(dir))
+                {
+                    string safeDir = SecurityValidator.SanitizeRelativeDirectoryPath(dir);
+                    targetDir = !string.IsNullOrWhiteSpace(safeDir)
+                        ? Path.Combine(destinationDirectory, safeDir)
+                        : destinationDirectory;
+                }
+                else
+                {
+                    targetDir = destinationDirectory;
+                }
             }
             else
             {

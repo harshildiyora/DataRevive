@@ -14,32 +14,72 @@ namespace DataRecovery.Core.Storage
             // 1. Enumerate standard Logical Drives (C:, D:, USB Flash, etc.)
             foreach (var drive in DriveInfo.GetDrives())
             {
-                if (!drive.IsReady) continue;
-
-                string driveLetter = drive.Name.TrimEnd('\\').ToUpperInvariant();
-                bool isSys = driveLetter.Equals(systemDrive, StringComparison.OrdinalIgnoreCase);
-
-                var dev = new StorageDevice
+                try
                 {
-                    Name = drive.Name.TrimEnd('\\'),
-                    DriveLetter = driveLetter,
-                    VolumeLabel = string.IsNullOrWhiteSpace(drive.VolumeLabel) ? (isSys ? "Local Disk" : "Volume") : drive.VolumeLabel,
-                    DevicePath = $@"\\.\{driveLetter}",
-                    FileSystem = string.IsNullOrEmpty(drive.DriveFormat) ? "NTFS" : drive.DriveFormat,
-                    DeviceType = StorageDeviceType.LogicalDrive,
-                    TotalSizeBytes = drive.TotalSize,
-                    FreeSizeBytes = drive.TotalFreeSpace,
-                    SectorSize = 512,
-                    IsSystemDrive = isSys
-                };
+                    if (!drive.IsReady) continue;
 
-                // Query volume serial number for anti-overwrite matching
-                if (NativeMethods.GetVolumeInformation(drive.Name, IntPtr.Zero, 0, out uint serial, out _, out _, IntPtr.Zero, 0))
-                {
-                    dev.VolumeSerialNumber = serial;
+                    string driveLetter = drive.Name.TrimEnd('\\').ToUpperInvariant();
+                    bool isSys = driveLetter.Equals(systemDrive, StringComparison.OrdinalIgnoreCase);
+
+                    string volumeLabel = isSys ? "Local Disk" : "Volume";
+                    try
+                    {
+                        if (!string.IsNullOrWhiteSpace(drive.VolumeLabel))
+                        {
+                            volumeLabel = drive.VolumeLabel;
+                        }
+                    }
+                    catch { }
+
+                    string fileSystem = "NTFS";
+                    try
+                    {
+                        if (!string.IsNullOrEmpty(drive.DriveFormat))
+                        {
+                            fileSystem = drive.DriveFormat;
+                        }
+                    }
+                    catch { }
+
+                    long totalSize = 0;
+                    long freeSize = 0;
+                    try
+                    {
+                        totalSize = drive.TotalSize;
+                        freeSize = drive.TotalFreeSpace;
+                    }
+                    catch { }
+
+                    var dev = new StorageDevice
+                    {
+                        Name = drive.Name.TrimEnd('\\'),
+                        DriveLetter = driveLetter,
+                        VolumeLabel = volumeLabel,
+                        DevicePath = $@"\\.\{driveLetter}",
+                        FileSystem = fileSystem,
+                        DeviceType = StorageDeviceType.LogicalDrive,
+                        TotalSizeBytes = totalSize,
+                        FreeSizeBytes = freeSize,
+                        SectorSize = 512,
+                        IsSystemDrive = isSys
+                    };
+
+                    // Query volume serial number for anti-overwrite matching
+                    try
+                    {
+                        if (NativeMethods.GetVolumeInformation(drive.Name, IntPtr.Zero, 0, out uint serial, out _, out _, IntPtr.Zero, 0))
+                        {
+                            dev.VolumeSerialNumber = serial;
+                        }
+                    }
+                    catch { }
+
+                    devices.Add(dev);
                 }
-
-                devices.Add(dev);
+                catch
+                {
+                    // Ignore inaccessible or unmounted drives safely
+                }
             }
 
             return devices;

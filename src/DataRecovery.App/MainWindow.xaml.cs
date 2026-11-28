@@ -13,6 +13,15 @@ namespace DataRecovery.App
         {
             InitializeComponent();
             Loaded += MainWindow_Loaded;
+            Closed += MainWindow_Closed;
+        }
+
+        private void MainWindow_Closed(object? sender, EventArgs e)
+        {
+            if (DataContext is MainViewModel vm)
+            {
+                vm.Dispose();
+            }
         }
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
