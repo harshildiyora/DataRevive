@@ -1108,9 +1108,6 @@ namespace DataRecovery.App.ViewModels
 
             if (file == null) return;
 
-            // Always default to Details tab where Image Preview & Metadata are combined
-            SelectedPreviewTabIndex = 0;
-
             try
             {
                 byte[] previewBuffer;
